@@ -21,7 +21,42 @@ router.post("/", (req, res) => {
     );
 });
 
-// GET Posts /api/posts
+// POST /api/posts/:id/comments
+router.post("/:id/comments", (req, res) => {
+  const postId = req.params.id;
+  const comment = req.body;
+  comment.post_id = postId;
+  Posts.findById(postId)
+    .then(post => {
+      if (post && post.length) {
+        if (!comment.text) {
+          res
+            .status(400)
+            .json({ errorMessage: "Please provide text for the comment." });
+        } else {
+          Posts.insertComment(comment)
+            .then(newComment => res.status(201).json(newComment))
+            .catch(err =>
+              res.status(500).json({
+                error:
+                  "There was an error while saving the comment to the database"
+              })
+            );
+        }
+      } else {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist." });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: "The post information could not be retrieved."
+      });
+    });
+});
+
+// GET /api/posts
 router.get("/", (req, res) => {
   Posts.find()
     .then(posts => {
