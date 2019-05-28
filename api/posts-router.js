@@ -2,6 +2,25 @@ const router = require("express").Router();
 
 const Posts = require("../data/db.js");
 
+// POST /api/posts
+
+router.post("/", (req, res) => {
+  const post = req.body;
+  if (!post.title || !post.contents) {
+    res.status(400).json({
+      errorMessage: "Please provide title and contents for the post."
+    });
+    return;
+  }
+  Posts.insert(post)
+    .then(newPost => res.status(201).json(post))
+    .catch(err =>
+      res.status(500).json({
+        error: "There was an error while saving the post to the database"
+      })
+    );
+});
+
 // GET Posts /api/posts
 router.get("/", (req, res) => {
   Posts.find()
