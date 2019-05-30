@@ -12,7 +12,7 @@ class App extends React.Component {
 
   componentDidMount() {
     return axios
-      .get("http://localhost:4000/api/posts")
+      .get("https://web-app-version.herokuapp.com/api/posts")
       .then(posts => this.setState({ posts: posts.data }))
       .catch(err => this.setState({ error: err }));
   }
